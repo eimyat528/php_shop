@@ -5,8 +5,9 @@ require '../config/common.php';
 
 
 if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
-  header('Location:login.php');
+  header('Location: /admin/login.php');
 }
+
 
 ?>
 
@@ -74,10 +75,11 @@ if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
                     </tr>
                   </thead>
                   <tbody>
-                    <?php
-                    if ($result) {
-                      $i = 1;
-                      foreach ($result as $value) { ?>
+                  <?php
+                   $i =1;
+                    if($result){
+                        foreach ($result as $value){
+                        ?>
 
                         <?php
                           $catStmt = $pdo->prepare("SELECT * FROM categories WHERE id=".$value['category_id']);
@@ -104,11 +106,11 @@ if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
                             </div>
                           </td>
                         </tr>
-                    <?php
-                      $i++;
-                      }
+                        <?php   
+                         $i++;
+                        }
                     }
-                    ?>
+                   ?>
                   </tbody>
                 </table><br>
                 <nav aria-label="Page navigation example" style="float:right">
