@@ -5,8 +5,21 @@ require '../config/common.php';
 
 
 if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
-  header('Location:login.php');
+  header('Location: /admin/login.php');
 }
+
+// if ($_SESSION['role'] != 1) {
+//   header('Location: /admin/login.php');
+// }
+
+// if ($_POST['search']) {
+//   setcookie('search',$_POST['search'], time() + (86400 * 30), "/");
+// }else{
+//   if (empty($_GET['pageno'])) {
+//     unset($_COOKIE['search']); 
+//     setcookie('search', null, -1, '/'); 
+//   }
+// }
 
 ?>
 
@@ -31,7 +44,7 @@ if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
                 $numOfrecs = 5;
                 $offset = ($pageno - 1) * $numOfrecs;
 
-                if (empty($_POST['search'])) {
+                if (empty($_POST['search']) && empty($_COOKIE['search'])) {
                   $stmt = $pdo->prepare("SELECT * FROM categories ORDER BY id DESC");
                   $stmt->execute();
                   $rawResult = $stmt->fetchAll();
@@ -58,7 +71,7 @@ if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
               <!-- /.card-header -->
               <div class="card-body">
                 <div>
-                  <a href="cat_add.php" type="button" class="btn btn-success">Create New Category</a>
+                  <a href="cat_add.php" type="button" class="btn btn-success">New Category</a>
                 </div>
                 <br>
                 <table class="table table-bordered">
@@ -66,7 +79,7 @@ if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
                     <tr>
                       <th style="width: 10px">#</th>
                       <th>Name</th>
-                      <th>Title</th>
+                      <th>Description</th>
                       <th style="width: 40px">Actions</th>
                     </tr>
                   </thead>
@@ -75,13 +88,10 @@ if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
                     if ($result) {
                       $i = 1;
                       foreach ($result as $value) { ?>
-
-                     
                         <tr>
                           <td><?php echo $i;?></td>
                           <td><?php echo escape($value['name'])?></td>
                           <td><?php echo escape(substr($value['description'],0,50))?></td>
-                          
                           <td>
                             <div class="btn-group">
                               <div class="container">
@@ -100,6 +110,7 @@ if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
                       }
                     }
                     ?>
+                    </tbody>
                   </tbody>
                 </table><br>
                 <nav aria-label="Page navigation example" style="float:right">
