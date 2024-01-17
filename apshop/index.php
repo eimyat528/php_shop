@@ -17,27 +17,40 @@
 					$offset = ($pageno - 1) * $numOfrecs;
 
 					if (empty($_POST['search']) && empty($_COOKIE['search'])) {
-					$stmt = $pdo->prepare("SELECT * FROM products ORDER BY id DESC");
-					$stmt->execute();
-					$rawResult = $stmt->fetchAll();
-
-					$total_pages = ceil(count($rawResult) / $numOfrecs);
-
-					$stmt = $pdo->prepare("SELECT * FROM products ORDER BY id DESC LIMIT $offset,$numOfrecs");
-					$stmt->execute();
-					$result = $stmt->fetchAll();
-					}else{
-					$searchKey = $_POST['search'] ? $_POST['search'] : $_COOKIE['search'];
-					$stmt = $pdo->prepare("SELECT * FROM products WHERE name LIKE '%$searchKey%' ORDER BY id DESC");
-					$stmt->execute();
-					$rawResult = $stmt->fetchAll();
-
-					$total_pages = ceil(count($rawResult) / $numOfrecs);
-
-					$stmt = $pdo->prepare("SELECT * FROM products WHERE name LIKE '%$searchKey%' ORDER BY id DESC LIMIT $offset,$numOfrecs");
-					$stmt->execute();
-					$result = $stmt->fetchAll();
-					}
+						if(!empty($_GET['category_id'])){
+					    $categoryId = $_GET['category_id'];
+						$stmt = $pdo->prepare("SELECT * FROM products  WHERE category_id=$categoryId ORDER BY id DESC");
+						$stmt->execute();
+						$rawResult = $stmt->fetchAll();
+	  
+						$total_pages = ceil(count($rawResult) / $numOfrecs);
+	  
+						$stmt = $pdo->prepare("SELECT * FROM products WHERE category_id=$categoryId ORDER BY id DESC LIMIT $offset,$numOfrecs");
+						$stmt->execute();
+						$result = $stmt->fetchAll();
+						}else{
+						$stmt = $pdo->prepare("SELECT * FROM products ORDER BY id DESC");
+						$stmt->execute();
+						$rawResult = $stmt->fetchAll();
+	  
+						$total_pages = ceil(count($rawResult) / $numOfrecs);
+	  
+						$stmt = $pdo->prepare("SELECT * FROM products ORDER BY id DESC LIMIT $offset,$numOfrecs");
+						$stmt->execute();
+						$result = $stmt->fetchAll();
+						}
+					  }else{
+						$searchKey = $_POST['search'] ? $_POST['search'] : $_COOKIE['search'];
+						$stmt = $pdo->prepare("SELECT * FROM products WHERE name LIKE '%$searchKey%' ORDER BY id DESC");
+						$stmt->execute();
+						$rawResult = $stmt->fetchAll();
+	  
+						$total_pages = ceil(count($rawResult) / $numOfrecs);
+	  
+						$stmt = $pdo->prepare("SELECT * FROM products WHERE name LIKE '%$searchKey%' ORDER BY id DESC LIMIT $offset,$numOfrecs");
+						$stmt->execute();
+						$result = $stmt->fetchAll();
+					  }
 
                 ?>
 			         			<div class="container">
@@ -54,7 +67,7 @@
 												    ?>
 
 													<?php foreach ($catResult as $key => $value) { ?>
-														<a href="#" ><span class="lnr lnr-arrow-right"></span><?php echo escape($value['name'])?></a>
+														<a href="index.php?category_id=<?php echo $value['id']?>" ><span class="lnr lnr-arrow-right"></span><?php echo escape($value['name'])?></a>
 													<?php  } ?>
 													</li>
 												</ul>
@@ -80,7 +93,7 @@
 															foreach ($result as $key => $value) {?>
 																<div class="col-lg-4 col-md-6">
 																	<div class="single-product">
-																		<img class="img-fluid" src="admin/images/<?php echo escape($value['image'])?>" style="height: 250px;">
+																		<a href="product_detail.php?id=<?php echo $value['id'] ?>"><img class="img-fluid" src="admin/images/<?php echo escape($value['image'])?>" style="height: 250px;"></a>
 																		<div class="product-details">
 																			<h6><?php echo escape($value['name'])?></h6>
 																			<div class="price">
