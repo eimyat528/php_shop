@@ -1,29 +1,32 @@
 <?php
+
 session_start();
+
 require 'config/config.php';
 require 'config/common.php';
 
 if ($_POST) {
-  $email = $_POST['email'];
-  $password = $_POST['password'];
+	$email = $_POST['email'];
+	$password = $_POST['password'];
 
-  $stmt = $pdo->prepare("SELECT * FROM users WHERE email=:email");
+	$stmt = $pdo->prepare("SELECT * FROM users WHERE email=:email");
+	$stmt->execute(
+			array(':email'=>$email)
+	);
+	$user = $stmt->fetch(PDO::FETCH_ASSOC);
+	if ($user) {
+		if (password_verify($password,$user['password'])) {
+			$_SESSION['user_id'] = $user['id'];
+			$_SESSION['username'] = $user['name'];
+			$_SESSION['logged_in'] = time();
 
-  $stmt->execute(
-	array(':email' => $email)
-  );
- 
+			header("Location: index.php");
+		}
+	}
 
-  if ($user) {
-    if (password_verify($password,$user['password'])) {
-      $_SESSION['user_id'] = $user['id'];
-      $_SESSION['username'] = $user['name'];
-      $_SESSION['logged_in'] = time();
-      header('Location: index.php');
-    }
-  }
-  echo "<script>alert('Incorrect credentials')</script>";
+	echo "<script>alert('Incorrect Credentials');</script>";
 }
+
 
 ?>
 
@@ -44,7 +47,7 @@ if ($_POST) {
 	<!-- meta character set -->
 	<meta charset="UTF-8">
 	<!-- Site Title -->
-	<title>Karma Shop</title>
+	<title>AP Shopping|Login</title>
 
 	<!--
 		CSS
@@ -76,9 +79,7 @@ if ($_POST) {
 					</button>
 					<!-- Collect the nav links, forms, and other content for toggling -->
 					<div class="collapse navbar-collapse offset" id="navbarSupportedContent">
-						<ul class="nav navbar-nav navbar-right">
-							
-						</ul>
+
 					</div>
 				</div>
 			</nav>
@@ -128,23 +129,17 @@ if ($_POST) {
 				<div class="col-lg-6">
 					<div class="login_form_inner">
 						<h3>Log in to enter</h3>
-						<form class="row login_form" action="index.php" method="post" id="contactForm" novalidate="novalidate">
-						    <input name="_token" type="hidden" value="<?php echo $_SESSION['_token']; ?>">
+						<form class="row login_form" action="login.php" method="post" id="contactForm" novalidate="novalidate">
+							<input name="_token" type="hidden" value="<?php echo $_SESSION['_token']; ?>">
+
 							<div class="col-md-12 form-group">
-								<input type="text" class="form-control" id="email" name="email" placeholder="Email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email'">
+								<input type="text" class="form-control" id="name" name="email" placeholder="Email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email'">
 							</div>
 							<div class="col-md-12 form-group">
-								<input type="text" class="form-control" id="name" name="name" placeholder="Password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'">
-							</div>
-							<div class="col-md-12 form-group">
-								<div class="creat_account">
-									<input type="checkbox" id="f-option2" name="selector">
-									<label for="f-option2">Keep me logged in</label>
-								</div>
+								<input type="password" class="form-control" id="name" name="password" placeholder="Password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'">
 							</div>
 							<div class="col-md-12 form-group">
 								<button type="submit" value="submit" class="primary-btn">Log In</button>
-								<a href="#">Forgot Password?</a>
 							</div>
 						</form>
 					</div>
@@ -156,15 +151,15 @@ if ($_POST) {
 
 	<!-- start footer Area -->
 	<footer class="footer-area section_gap">
-		<div class="container">
-			<div class="footer-bottom d-flex justify-content-center align-items-center flex-wrap">
-				<p class="footer-text m-0"><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-</p>
-			</div>
-		</div>
-</footer>
+	<div class="container">
+	<div class="footer-bottom d-flex justify-content-center align-items-center flex-wrap">
+	  <p class="footer-text m-0"><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+	Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved</a>
+	<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+	</p>
+	</div>
+	</div>
+	</footer>
 	<!-- End footer Area -->
 
 
