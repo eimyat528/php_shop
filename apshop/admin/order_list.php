@@ -41,7 +41,7 @@ if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
                   $pageno = 1;
                 }
 
-                $numOfrecs = 5;
+                $numOfrecs = 10;
                 $offset = ($pageno - 1) * $numOfrecs;
               
                   $stmt = $pdo->prepare("SELECT * FROM sale_orders ORDER BY id DESC");
